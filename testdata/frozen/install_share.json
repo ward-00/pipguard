@@ -1,0 +1,50 @@
+{
+  "window": "2026-09-01 \u2013 2026-09-30",
+  "downloads_total": 27672783820,
+  "downloads_young": 4314385,
+  "share_young": 0.00015590715513348017,
+  "share_min": 0.00015265315668446685,
+  "share_max": 0.00015984672642414761,
+  "runs": [
+    {
+      "total": 28711355174,
+      "young": 4382879,
+      "young_projects": 4809,
+      "projects": 263611,
+      "share": 0.00015265315668446685
+    },
+    {
+      "total": 26802794541,
+      "young": 4135288,
+      "young_projects": 4897,
+      "projects": 255507,
+      "share": 0.00015428570307003943
+    },
+    {
+      "total": 27672783820,
+      "young": 4314385,
+      "young_projects": 4886,
+      "projects": 259948,
+      "share": 0.00015590715513348017
+    },
+    {
+      "total": 25508856265,
+      "young": 4046598,
+      "young_projects": 5014,
+      "projects": 251302,
+      "share": 0.0001586350229881622
+    },
+    {
+      "total": 26219323309,
+      "young": 4191073,
+      "young_projects": 5042,
+      "projects": 256793,
+      "share": 0.00015984672642414761
+    }
+  ],
+  "projects_downloaded": 259948,
+  "projects_young_downloaded": 4886,
+  "fetched_at": "2026-10-19T15:23:08Z",
+  "source": "https://sql-clickhouse.clickhouse.com/?user=demo (pypi.pypi_downloads_per_day \u00d7 pypi.projects)",
+  "note": "Median of repeated queries (the mirror's download totals vary between queries; the share is far more stable, see share_min/share_max). Downloads are dominated by CI systems and mirrors, so this is a proxy for how often an install would hit the cooldown prompt, not a count of users."
+}

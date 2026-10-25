@@ -1,0 +1,15 @@
+y
+────────────────────────────────────────────────────────────
+PACKAGE SECURITY WARNING
+Package : zzz-pipguard-selftest-unregistered
+Level   : DANGER (score 100)
+
+Reasons:
+  - The package is not registered on PyPI
+
+An unregistered package may be a hallucinated name that an attacker
+could later register (slopsquatting).
+────────────────────────────────────────────────────────────
+Continue installation? [y/N]: Defaulting to user installation because normal site-packages is not writeable
+ERROR: Could not find a version that satisfies the requirement zzz-pipguard-selftest-unregistered (from versions: none)
+ERROR: No matching distribution found for zzz-pipguard-selftest-unregistered

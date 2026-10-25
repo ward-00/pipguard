@@ -1,0 +1,72 @@
+{
+ "models": {
+  "DeepSeek-Coder-1.3B-Instruct": {
+   "prompts": 500,
+   "recommendations": 868,
+   "existing": 698,
+   "unregistered": 139,
+   "late": 6,
+   "removed": 22,
+   "unknown": 3,
+   "prompts_with_hallucination": 95
+  },
+  "Qwen2.5-Coder-1.5B-Instruct": {
+   "prompts": 500,
+   "recommendations": 1064,
+   "existing": 840,
+   "unregistered": 194,
+   "late": 3,
+   "removed": 24,
+   "unknown": 3,
+   "prompts_with_hallucination": 112
+  },
+  "Gemma-3-4B-it": {
+   "prompts": 500,
+   "recommendations": 1491,
+   "existing": 1252,
+   "unregistered": 184,
+   "late": 7,
+   "removed": 36,
+   "unknown": 12,
+   "prompts_with_hallucination": 135
+  },
+  "Qwen3.5-4B": {
+   "prompts": 500,
+   "recommendations": 2185,
+   "existing": 1812,
+   "unregistered": 329,
+   "late": 2,
+   "removed": 36,
+   "unknown": 6,
+   "prompts_with_hallucination": 123
+  }
+ },
+ "distinct_hallucinated": 668,
+ "distinct_unregistered": 656,
+ "distinct_late": 12,
+ "recurring_hallucinated": 109,
+ "late": {
+  "on_pypi_now": 9,
+  "removed_since": 3,
+  "in_osv": 0,
+  "recurring": 3,
+  "younger_than_30d_now": 0,
+  "age_now_days_quartiles": [
+   107.27980007798611,
+   210.77562472503473,
+   406.58516560902774,
+   908.4655915035416
+  ],
+  "days_after_model_release": {
+   "min": 26.657312449803243,
+   "median": 245.32802350694442,
+   "max": 755.0716199537037
+  },
+  "owner_class": {
+   "minimal": 4,
+   "substantive": 5,
+   "removed": 3
+  }
+ },
+ "lookup_at": "2026-10-25T07:30:06Z"
+}

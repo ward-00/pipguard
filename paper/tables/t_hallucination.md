@@ -1,0 +1,8 @@
+### Package hallucination by model (500 prompts per model)
+
+| Model | Released | Prompts | Recommended names | Never registered (%) | Registered only after the model's release (%) | Prompts with ≥ 1 hallucinated name (%) |
+|---|---|---|---|---|---|---|
+| DeepSeek-Coder-1.3B-Instruct | 2023-11-01 | 500 | 868 | 16.0 | 0.69 | 19.0 |
+| Qwen2.5-Coder-1.5B-Instruct | 2024-09-19 | 500 | 1064 | 18.2 | 0.28 | 22.4 |
+| Gemma-3-4B-it | 2025-03-12 | 500 | 1491 | 12.3 | 0.47 | 27.0 |
+| Qwen3.5-4B | 2026-03-02 | 500 | 2185 | 15.1 | 0.09 | 24.6 |

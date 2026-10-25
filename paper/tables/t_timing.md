@@ -1,0 +1,10 @@
+### Time from the first malicious upload to the OSV report and to the last recorded download
+
+| Period | n | Report: median (days) | Reported ≤ 1 d (%) | ≤ 7 d (%) | ≤ 30 d (%) | Last client download: median (days) | ≤ 7 d (%) | ≤ 30 d (%) |
+|---|---|---|---|---|---|---|---|---|
+| < 2025 | 7431 | 0.1 | 78.9 | 79.0 | 81.3 | 1 | 72.4 | 72.9 |
+| 2025 | 611 | 0.1 | 75.0 | 80.4 | 88.1 | 1 | 90.6 | 94.7 |
+| 2026 | 546 | 0.0 | 82.2 | 91.0 | 95.2 | 1 | 93.5 | 97.0 |
+| All | 8588 | 0.1 | 78.8 | 79.9 | 82.7 | 1 | 75.1 | 76.0 |
+
+Last client download = end of the last day (age bucket) with a download by pip, uv, poetry, pdm or pipenv; it approximates removal from PyPI. Packages without any client download are excluded from that column.

@@ -1,0 +1,14 @@
+────────────────────────────────────────────────────────────
+PACKAGE SECURITY WARNING
+Package : zzz-pipguard-selftest-unregistered
+Level   : DANGER (score 100)
+
+Reasons:
+  - The package is not registered on PyPI
+
+An unregistered package may be a hallucinated name that an attacker
+could later register (slopsquatting).
+────────────────────────────────────────────────────────────
+[non-interactive] Installation cancelled.
+pipguard: {"tool":"pipguard","decision":"blocked","package":"zzz-pipguard-selftest-unregistered","level":"DANGER","score":100,"reasons":["The package is not registered on PyPI"],"advice":"Ask a human to verify the package name and source. To approve it permanently, add it to the \"allow\" list in the pipguard configuration file.","exit_status":3}
+Installation cancelled.

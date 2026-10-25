@@ -1,0 +1,21 @@
+bash: cannot set terminal process group (1487): Inappropriate ioctl for device
+bash: no job control in this shell
+Defaulting to user installation because normal site-packages is not writeable
+Collecting git+https://example.invalid/x.git
+  Cloning https://example.invalid/x.git to /tmp/pip-req-build-w88wo54d
+  Running command git clone --filter=blob:none --quiet https://example.invalid/x.git /tmp/pip-req-build-w88wo54d
+  fatal: unable to access 'https://example.invalid/x.git/': Could not resolve host: example.invalid
+  error: subprocess-exited-with-error
+  
+  × git clone --filter=blob:none --quiet https://example.invalid/x.git /tmp/pip-req-build-w88wo54d did not run successfully.
+  │ exit code: 128
+  ╰─> See above for output.
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× git clone --filter=blob:none --quiet https://example.invalid/x.git /tmp/pip-req-build-w88wo54d did not run successfully.
+│ exit code: 128
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.

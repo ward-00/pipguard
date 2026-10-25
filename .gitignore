@@ -1,0 +1,42 @@
+# Build outputs and caches
+build/
+/pipguard
+*.test
+__pycache__/
+*.pyc
+.venv/
+*.log
+.DS_Store
+*.bak
+*.swp
+
+# Sensitive: hallucinated package names that are not registered on PyPI.
+# Never publish them (they would enable slopsquatting); see reproduction/README.md.
+reproduction/Tests/
+testdata/positive_*.txt
+testdata/results_full.csv
+testdata/results_baselines.csv
+testdata/frozen/meta_hallucinated_live.jsonl
+
+# Large or re-downloadable inputs
+reproduction/Models/
+reproduction/.venv/
+reproduction/Data/Python_subset/
+scripts/malicious/data/
+
+# Manuscript, reviews and working notes (not part of the software artifact)
+paper-writing/
+scripts/paper/
+HANDOVER.md
+remind.md
+build_guide.md
+CHANGES.md
+
+# Superseded outputs of earlier iterations
+bench-results/
+bench-results-final.old/
+paper/legacy_v2/
+scripts/eval/analyze.py
+scripts/eval/figures_id.py
+testdata/results_negative_only.csv
+testdata/negative_newest.txt

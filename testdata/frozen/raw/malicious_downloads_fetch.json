@@ -1,0 +1,7 @@
+{
+  "fetched_at": "2026-10-24T10:10:35Z",
+  "source": "https://sql-clickhouse.clickhouse.com/?user=demo",
+  "table": "pypi.pypi_downloads_per_day_by_version_by_installer_by_type",
+  "client_installers": "('pip','uv','poetry','pdm','pipenv')",
+  "age_bucket": "multiIf(age < 0, -1, age <= 14, age, age < 21, 15, age < 30, 21, age < 60, 30, age < 90, 60, age < 180, 90, age < 365, 180, 365)"
+}

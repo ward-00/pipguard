@@ -1,0 +1,45 @@
+{
+  "clickhouse_vs_pypi_first": {
+    "n": 487,
+    "agreement": {
+      "release_count": 0.9897,
+      "first_release_day": 0.9466,
+      "I-03 single release": 0.9897,
+      "I-04 no homepage/repository": 0.9733,
+      "I-06 summary < 10": 0.9877,
+      "I-07 sdist only": 0.9979,
+      "I-08 description < 100": 0.9733,
+      "I-09 no classifiers": 0.9856
+    }
+  },
+  "clickhouse_vs_pypi_last": {
+    "n": 487,
+    "agreement": {
+      "release_count": 0.8439,
+      "first_release_day": 0.9466,
+      "I-03 single release": 0.9713,
+      "I-04 no homepage/repository": 0.9938,
+      "I-06 summary < 10": 0.9979,
+      "I-07 sdist only": 1.0,
+      "I-08 description < 100": 0.9979,
+      "I-09 no classifiers": 0.9959
+    }
+  },
+  "clickhouse_vs_pypi_coverage": {
+    "sample": 500,
+    "in_clickhouse": 500
+  },
+  "reconstruction_vs_live_registry": {
+    "n": 487,
+    "agreement": {
+      "release_count": 0.9979,
+      "first_release_day": 1.0,
+      "I-03 single release": 1.0,
+      "I-04 no homepage/repository": 1.0,
+      "I-06 summary < 10": 1.0,
+      "I-07 sdist only": 1.0,
+      "I-08 description < 100": 1.0,
+      "I-09 no classifiers": 0.9979
+    }
+  }
+}

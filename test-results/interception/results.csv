@@ -1,0 +1,44 @@
+id,shell,scenario,command,expected,observed,exit_code,log_entries,pass
+b1,bash,"1 Interactive shell (TTY), answer N","/dev/null",prompt-no,"intercepted, prompt, blocked",3,1,yes
+b1y,bash,"1 Interactive shell (TTY), answer Y","/dev/null",prompt-yes,"intercepted, forwarded",1,1,yes
+b2,bash,"2 Active virtual environment","source $VENV/bin/activate && pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+b3,bash,"3 pip3","pip3 install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+b4,bash,"4 python -m pip (active venv)","source $VENV/bin/activate && python -m pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+b5,bash,"5 python3 -m pip","python3 -m pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+b6,bash,"6 Non-interactive script (bash t.sh)","bash $VENV/../t.sh",blocked,"intercepted, blocked",3,1,yes
+b7,bash,"7 Python subprocess","python3 -c ""import subprocess,sys; sys.exit(subprocess.run(['pip','install','--no-index','zzz-pipguard-selftest-unregistered']).returncode)""",blocked,"intercepted, blocked",3,1,yes
+b8,bash,"8 pip install -r requirements.txt","pip install --no-index -r $VENV/../requirements.txt",blocked,"intercepted, blocked",3,1,yes
+b9,bash,"9 Absolute path to the real pip (limitation)","/usr/bin/pip install --no-index $BAD",bypass,"bypass",1,0,yes
+z1,zsh,"1 Interactive shell (TTY), answer N","/dev/null",prompt-no,"intercepted, prompt, blocked",3,1,yes
+z1y,zsh,"1 Interactive shell (TTY), answer Y","/dev/null",prompt-yes,"intercepted, forwarded",1,1,yes
+z2,zsh,"2 Active virtual environment","source $VENV/bin/activate && pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+z3,zsh,"3 pip3","pip3 install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+z4,zsh,"4 python -m pip (active venv)","source $VENV/bin/activate && python -m pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+z5,zsh,"5 python3 -m pip","python3 -m pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+z6,zsh,"6 Non-interactive script (bash t.sh)","bash $VENV/../t.sh",blocked,"intercepted, blocked",3,1,yes
+z7,zsh,"7 Python subprocess","python3 -c ""import subprocess,sys; sys.exit(subprocess.run(['pip','install','--no-index','zzz-pipguard-selftest-unregistered']).returncode)""",blocked,"intercepted, blocked",3,1,yes
+z8,zsh,"8 pip install -r requirements.txt","pip install --no-index -r $VENV/../requirements.txt",blocked,"intercepted, blocked",3,1,yes
+z9,zsh,"9 Absolute path to the real pip (limitation)","/usr/bin/pip install --no-index $BAD",bypass,"bypass",1,0,yes
+x1,bash,"Script that activates its own venv (limitation)","bash -c ""source $VENV/bin/activate; pip install --no-index $BAD""",bypass,"bypass",1,0,yes
+x2,bash,"Absolute interpreter path, as IDEs run pip (limitation)","$VENV/bin/python -m pip install --no-index $BAD",bypass,"bypass",1,0,yes
+x3,bash,"CI job, stdin not a TTY (/dev/null)","pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+x4,bash,"AI agent: subprocess, no TTY, output captured","python3 -c ""import subprocess,sys; p=subprocess.run('pip install --no-index zzz-pipguard-selftest-unregistered', shell=True, capture_output=True, text=True, stdin=subprocess.DEVNULL); sys.stderr.write(p.stderr); sys.exit(p.returncode)""",blocked,"intercepted, blocked",3,1,yes
+x5,bash,"pip download (builds sdists)","pip download --no-index -d $VENV/../dl $BAD",blocked,"intercepted, blocked",3,1,yes
+x6,bash,"pip wheel (builds sdists)","pip wheel --no-index -w $VENV/../wh $BAD",blocked,"intercepted, blocked",3,1,yes
+x7,bash,"pip install -c constraints.txt","pip install --no-index -c $VENV/../constraints.txt $BAD",blocked,"intercepted, blocked",3,1,yes
+x8,bash,"--extra-index-url (warning notes dependency confusion)","pip install --no-index --extra-index-url https://example.invalid/simple $BAD",blocked,"intercepted, blocked",3,1,yes
+x9,bash,"Custom primary index -i (not checked by design)","pip install --no-index -i https://example.invalid/simple $BAD",skipped,"not checked (non-PyPI index), forwarded",1,0,yes
+x10,bash,"Direct URL/VCS requirement (not on PyPI; not checked)","pip install --no-index ""git+https://example.invalid/x.git""",bypass,"bypass",1,0,yes
+x11,bash,"Safe package (requests) passes without a warning","pip install --no-index requests",safe,"intercepted, safe, forwarded",1,0,yes
+x12,bash,"uv pip install (other installer; limitation)","$VENV/bin/uv pip install --offline --python $VENV/bin/python $BAD",bypass,"bypass",1,0,yes
+x13,bash,"sudo-style secure_path without ~/.local/bin (limitation)","pip install --no-index $BAD",bypass,"bypass",1,0,yes
+x14,bash,"CI runner or container image without pipguard on PATH","pip install --no-index $BAD",bypass,"bypass",1,0,yes
+x15,bash,"CI runner or container image with pipguard on PATH","pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+x20,bash,"Non-interactive shell (CI step): pip","python3 -c ""import subprocess,sys; p=subprocess.run('pip install --no-index zzz-pipguard-selftest-unregistered', shell=True, capture_output=True, text=True, stdin=subprocess.DEVNULL); sys.stderr.write(p.stderr); sys.exit(p.returncode)""",blocked,"intercepted, blocked",3,1,yes
+x21,bash,"Non-interactive shell (CI step): python3 -m pip (limitation)","python3 -m pip install --no-index $BAD",bypass,"bypass",1,0,yes
+x22,bash,"Agent subprocess from a non-interactive shell: python3 -m pip (limitation)","python3 -c ""import subprocess,sys; p=subprocess.run('python3 -m pip install --no-index zzz-pipguard-selftest-unregistered', shell=True, capture_output=True, text=True, stdin=subprocess.DEVNULL); sys.stderr.write(p.stderr); sys.exit(p.returncode)""",bypass,"bypass",1,0,yes
+x23,bash,"Python subprocess [sys.executable, -m, pip] (limitation)","python3 -c ""import subprocess,sys; sys.exit(subprocess.run([sys.executable,'-m','pip','install','--no-index','zzz-pipguard-selftest-unregistered'], stdin=subprocess.DEVNULL).returncode)""",bypass,"bypass",1,0,yes
+x16,bash,"PIPGUARD_ASSUME_YES=1 ignored by default (agent-resistant)","pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+x17,bash,"PIPGUARD_ASSUME_YES=1 with allow_env_override","pip install --no-index $BAD",forwarded,"intercepted, forwarded",1,1,yes
+x18,bash,"PIPGUARD_DISABLE=1 ignored by default (agent-resistant)","pip install --no-index $BAD",blocked,"intercepted, blocked",3,1,yes
+x19,bash,"Fail-open: PyPI unreachable","pip install --no-index $BAD",failopen,"check failed, forwarded (fail-open)",1,0,yes

@@ -1,0 +1,19 @@
+{
+  "danger": 57,
+  "points": {
+    "I-01": 100,
+    "I-02": 50,
+    "I-04": 5,
+    "I-05": 15,
+    "I-07": 10,
+    "I-08": 12,
+    "I-09": 1
+  },
+  "similarity": {
+    "list_size": 5000,
+    "max_dist": 1,
+    "min_len": 5,
+    "transpositions": false
+  },
+  "warn": 50
+}

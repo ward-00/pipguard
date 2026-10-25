@@ -1,0 +1,13 @@
+{
+  "window": [
+    "2023-01-01",
+    "2026-07-01"
+  ],
+  "seed": "pipguard-benign-v1",
+  "candidates": 7000,
+  "in_osv": 166,
+  "removed_from_pypi": 782,
+  "kept": 5000,
+  "alive_checked_at": "2026-10-19T13:24:52Z",
+  "pypi_last_serial": 42440136
+}

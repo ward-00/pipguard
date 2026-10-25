@@ -1,0 +1,7 @@
+### pipguard under each installation-time scenario (test data)
+
+| Scenario | Malicious flagged | Malicious at DANGER | New legitimate flagged | New legitimate at DANGER |
+|---|---|---|---|---|
+| First malicious release (primary) | 94.1 (514/546) | 50.9 (278/546) | 100.0 (1039/1039) | 16.3 (169/1039) |
+| Last release | 93.2 (509/546) | 50.9 (278/546) | 65.8 (684/1039) | 9.5 (99/1039) |
+| At OSV report | 90.5 (494/546) | 49.5 (270/546) | – | – |

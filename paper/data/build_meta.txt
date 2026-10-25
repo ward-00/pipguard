@@ -1,0 +1,8 @@
+8588 -> testdata/frozen/meta_malicious_first.jsonl
+8588 -> testdata/frozen/meta_malicious_last.jsonl
+8588 -> testdata/frozen/meta_malicious_reported.jsonl
+4850 -> testdata/frozen/meta_benign_new_first.jsonl
+4850 -> testdata/frozen/meta_benign_new_last.jsonl
+7 -> testdata/frozen/meta_prospective_first.jsonl
+5000 -> testdata/frozen/meta_established.jsonl (0 without release times)
+{'malicious_with_history': 8588, 'malicious_versions_not_found': 86, 'established_without_release_times': 0}

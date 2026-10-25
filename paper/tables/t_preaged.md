@@ -1,0 +1,11 @@
+### Malicious releases in projects that were already at least 30 days old
+
+| Year of the first malicious upload | Malicious packages | In projects ≥ 30 d old | Share (%) | Caught by I-10, G = 90 d | Caught by I-10, G = 365 d | Withheld by a 30-day release-level cooldown |
+|---|---|---|---|---|---|---|
+| ≤ 2020 | 78 | 5 | 6.4 | 0 | 0 | 5 |
+| 2021 | 52 | 4 | 7.7 | 0 | 0 | 4 |
+| 2022 | 164 | 2 | 1.2 | 1 | 1 | 2 |
+| 2023 | 6255 | 7 | 0.1 | 5 | 3 | 7 |
+| 2024 | 882 | 8 | 0.9 | 7 | 6 | 8 |
+| 2025 | 611 | 9 | 1.5 | 5 | 3 | 9 |
+| 2026 | 546 | 32 | 5.9 | 17 | 4 | 32 |
