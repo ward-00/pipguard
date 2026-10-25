@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/editorid0001/pipguard/internal/scorer"
+	"github.com/ward-00/pipguard/internal/scorer"
 )
 
 func TestDevNullIsNotTerminal(t *testing.T) {

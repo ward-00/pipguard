@@ -89,3 +89,7 @@ python3 scripts/eval/compare_tools.py            # live comparison with pip --up
 Hallucinated package names that are not registered are never published (they would enable slopsquatting); the
 files that contain them are git-ignored (`reproduction/Tests/`, `testdata/positive_*.txt`,
 `testdata/frozen/meta_hallucinated_live.jsonl`).
+
+## Citation and license
+
+Archived on Zenodo: https://doi.org/10.5281/zenodo.23645430 (see `CITATION.cff`). Released under the MIT License (`LICENSE`). The package-hallucination probe in `reproduction/` reuses MIT-licensed code and data from Spracklen et al. (2025); see `reproduction/NOTICE.md`.

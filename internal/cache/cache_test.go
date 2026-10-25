@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/registry"
 )
 
 func countingFetch(calls *int, m registry.Metadata, err error) FetchFunc {

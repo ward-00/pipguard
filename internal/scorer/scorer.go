@@ -19,7 +19,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/registry"
 )
 
 // Indicator codes. I-01..I-06 come from the initial design, I-07..I-09 were

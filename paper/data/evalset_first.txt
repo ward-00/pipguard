@@ -384,4 +384,4 @@ negative_top1000/dev
   v2-without-I-09       0/1000   0.0000 [0.000–0.004]
   v2-danger-tanpa-I-09      0/1000   0.0000 [0.000–0.004]
 
-Durasi  : 1.9s
+Durasi  : 2.2s

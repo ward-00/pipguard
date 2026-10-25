@@ -1,13 +1,13 @@
-ok  	github.com/editorid0001/pipguard	(cached)
-ok  	github.com/editorid0001/pipguard/cmd/evalset	(cached)
-ok  	github.com/editorid0001/pipguard/internal/cache	(cached)
-ok  	github.com/editorid0001/pipguard/internal/config	(cached)
-?   	github.com/editorid0001/pipguard/internal/logger	[no test files]
-ok  	github.com/editorid0001/pipguard/internal/parser	(cached)
-?   	github.com/editorid0001/pipguard/internal/popular	[no test files]
-ok  	github.com/editorid0001/pipguard/internal/registry	(cached)
-ok  	github.com/editorid0001/pipguard/internal/scorer	(cached)
-ok  	github.com/editorid0001/pipguard/internal/ui	(cached)
+ok  	github.com/ward-00/pipguard	(cached)
+ok  	github.com/ward-00/pipguard/cmd/evalset	(cached)
+ok  	github.com/ward-00/pipguard/internal/cache	(cached)
+ok  	github.com/ward-00/pipguard/internal/config	(cached)
+?   	github.com/ward-00/pipguard/internal/logger	[no test files]
+ok  	github.com/ward-00/pipguard/internal/parser	(cached)
+?   	github.com/ward-00/pipguard/internal/popular	[no test files]
+ok  	github.com/ward-00/pipguard/internal/registry	(cached)
+ok  	github.com/ward-00/pipguard/internal/scorer	(cached)
+ok  	github.com/ward-00/pipguard/internal/ui	(cached)
 ----------------------------------------------------------------------
 Ran 9 tests in 0.001s
 

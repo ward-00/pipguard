@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "pipguard: install-time cooldown interceptor for pip and the time-aware evaluation of install-time defenses against new malicious PyPI packages"
+version: "1.0.0"
+date-released: "2026-10-25"
+doi: "10.5281/zenodo.23645430"
+repository-code: "https://github.com/ward-00/pipguard"
+license: MIT
+authors:
+  - family-names: "Alexandra"
+    given-names: "Edward"
+    affiliation: "Pelita Harapan University"
+    orcid: "https://orcid.org/0009-0005-5747-9272"
+abstract: "pipguard checks every package requested from pip against PyPI before pip runs and asks for confirmation when the name is not registered or the project is younger than 30 days (a project-level dependency cooldown). The repository also contains the frozen inputs and the offline pipeline that reproduce every number, table and figure of the accompanying paper: point-in-time metadata of 8,588 removed malicious PyPI packages, download-based exposure and cost of cooldowns, interception tests and latency benchmarks."
+keywords:
+  - "software supply chain security"
+  - "malicious packages"
+  - "PyPI"
+  - "dependency cooldown"
+  - "pip"
+  - "concept drift"
+  - "package hallucination"

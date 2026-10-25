@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/registry"
 )
 
 // TTL is the lifetime of one cache entry.

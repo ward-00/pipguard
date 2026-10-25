@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/scorer"
+	"github.com/ward-00/pipguard/internal/scorer"
 )
 
 // entryRecord is one log line.

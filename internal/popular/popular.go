@@ -10,7 +10,7 @@ import (
 	"bufio"
 	"strings"
 
-	"github.com/editorid0001/pipguard/internal/parser"
+	"github.com/ward-00/pipguard/internal/parser"
 )
 
 // Parse reads a popular-list file: one name per line; empty lines and lines

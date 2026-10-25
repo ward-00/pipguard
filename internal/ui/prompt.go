@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/editorid0001/pipguard/internal/scorer"
+	"github.com/ward-00/pipguard/internal/scorer"
 )
 
 // ExitBlocked is the exit status when pipguard cancels a command, distinct

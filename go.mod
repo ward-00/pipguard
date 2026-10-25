@@ -1,3 +1,3 @@
-module github.com/editorid0001/pipguard
+module github.com/ward-00/pipguard
 
-go 1.26.5
+go 1.22

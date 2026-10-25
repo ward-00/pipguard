@@ -221,8 +221,10 @@ def main():
                 recs[m].append(((r["dataset"], r["i"]), [n for n in parse(r["response"]) if n not in std]))
     allnames = sorted({n for v in recs.values() for _, ns in v for n in ns} | {TOP[n] for v in recs.values()
                                                                                for _, ns in v for n in ns if n in TOP})
-    cache = lookup(allnames, a.refresh)["names"]
-    now = datetime.now(timezone.utc)
+    looked = lookup(allnames, a.refresh)
+    cache = looked["names"]
+    # ages are measured at the (frozen) lookup time, so reruns give identical numbers
+    now = ph.parse_time(looked["looked_up_at"]) if looked.get("looked_up_at") else datetime.now(timezone.utc)
 
     def cls(m, n):
         st = cache[n]

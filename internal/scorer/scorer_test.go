@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/registry"
 )
 
 var testPopular = []string{"requests", "numpy", "flask", "django", "pandas", "psycopg", "psycopg2"}

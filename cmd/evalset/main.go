@@ -42,10 +42,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/editorid0001/pipguard/internal/parser"
-	"github.com/editorid0001/pipguard/internal/popular"
-	"github.com/editorid0001/pipguard/internal/registry"
-	"github.com/editorid0001/pipguard/internal/scorer"
+	"github.com/ward-00/pipguard/internal/parser"
+	"github.com/ward-00/pipguard/internal/popular"
+	"github.com/ward-00/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/scorer"
 )
 
 // fetchWithRetry memanggil registry dengan backoff eksponensial.

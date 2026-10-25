@@ -13,14 +13,14 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/editorid0001/pipguard/internal/cache"
-	"github.com/editorid0001/pipguard/internal/config"
-	"github.com/editorid0001/pipguard/internal/logger"
-	"github.com/editorid0001/pipguard/internal/parser"
-	"github.com/editorid0001/pipguard/internal/popular"
-	"github.com/editorid0001/pipguard/internal/registry"
-	"github.com/editorid0001/pipguard/internal/scorer"
-	"github.com/editorid0001/pipguard/internal/ui"
+	"github.com/ward-00/pipguard/internal/cache"
+	"github.com/ward-00/pipguard/internal/config"
+	"github.com/ward-00/pipguard/internal/logger"
+	"github.com/ward-00/pipguard/internal/parser"
+	"github.com/ward-00/pipguard/internal/popular"
+	"github.com/ward-00/pipguard/internal/registry"
+	"github.com/ward-00/pipguard/internal/scorer"
+	"github.com/ward-00/pipguard/internal/ui"
 )
 
 //go:embed assets/popular_v2.txt
