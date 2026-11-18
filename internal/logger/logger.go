@@ -1,6 +1,4 @@
-// Package logger records every package assessment in a local JSON Lines
-// activity log (used, among other things, as evidence by the interception
-// test).
+// Package logger appends every assessment to a JSON Lines activity log.
 package logger
 
 import (
@@ -12,7 +10,6 @@ import (
 	"github.com/ward-00/pipguard/internal/scorer"
 )
 
-// entryRecord is one log line.
 type entryRecord struct {
 	Timestamp time.Time `json:"timestamp"`
 	Package   string    `json:"package"`
@@ -21,11 +18,8 @@ type entryRecord struct {
 	Reasons   []string  `json:"reasons"`
 }
 
-// DefaultPath returns the default log file:
-// $XDG_CACHE_HOME/pipguard/activity.log or ~/.cache/pipguard/activity.log.
-//
-// The log lives next to the cache because both are operational data that
-// can be deleted at any time.
+// DefaultPath returns $XDG_CACHE_HOME/pipguard/activity.log or
+// ~/.cache/pipguard/activity.log.
 func DefaultPath() (string, error) {
 	base := os.Getenv("XDG_CACHE_HOME")
 	if base == "" {
@@ -38,8 +32,7 @@ func DefaultPath() (string, error) {
 	return filepath.Join(base, "pipguard", "activity.log"), nil
 }
 
-// Record appends one line to the activity log. Logging failures must not
-// stop the main flow (fail-open), so the function returns no error.
+// Record never fails: logging must not stop the installation.
 func Record(name string, r scorer.Result) {
 	path, err := DefaultPath()
 	if err != nil {

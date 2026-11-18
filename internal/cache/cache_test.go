@@ -101,6 +101,17 @@ func TestCorruptFileIsEmptyCache(t *testing.T) {
 	}
 }
 
+func TestNullFileIsUsableCache(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "cache.json")
+	if err := os.WriteFile(path, []byte("null"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	fetch := func(string) (registry.Metadata, error) { return registry.Metadata{Exists: true}, nil }
+	if _, err := Load(path).GetOrFetch("x", fetch); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSaveWithoutChangesDoesNotWrite(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "cache.json")
 	if err := Load(path).Save(); err != nil {

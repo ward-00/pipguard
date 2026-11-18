@@ -8,13 +8,12 @@ import (
 	"strings"
 )
 
-// maxRequirementDepth bounds chains of nested "-r" files, as a guard
-// against cycles.
+// maxRequirementDepth bounds chains of nested "-r" files.
 const maxRequirementDepth = 10
 
 // ExtractRequirementFiles returns the files given with "-r"/"--requirement".
-// Constraint files ("-c") are deliberately excluded: constraints only limit
-// versions and never make pip install a new package.
+// Constraint files ("-c") are excluded: they never make pip install a new
+// package.
 func ExtractRequirementFiles(args []string) []string {
 	var files []string
 	for i := 0; i < len(args); i++ {
@@ -28,24 +27,18 @@ func ExtractRequirementFiles(args []string) []string {
 		case strings.HasPrefix(a, "--requirement="):
 			files = append(files, strings.TrimPrefix(a, "--requirement="))
 		case strings.HasPrefix(a, "-r") && !strings.HasPrefix(a, "--"):
-			files = append(files, strings.TrimPrefix(a, "-r")) // the "-rreq.txt" form
+			files = append(files, strings.TrimPrefix(a, "-r")) // "-rreq.txt"
 		}
 	}
 	return files
 }
 
-// ReadRequirements reads package names from a pip requirements file,
-// including files included with "-r" (relative to the including file).
-// Lines that do not name an index package ("-e", local paths, URLs and PEP 508
-// direct references "name @ url") are skipped, as on the command line.
-//
-// Errors are returned together with the names read so far; the caller (main)
-// applies fail-open: an unreadable file does not stop the other checks, and
-// pip itself reports the error.
+// ReadRequirements reads package names from a requirements file and the
+// files it includes with "-r". On error it also returns the names read so
+// far, so that the caller can stay fail-open.
 func ReadRequirements(path string) ([]string, error) {
 	var names []string
-	seen := map[string]bool{}
-	err := readRequirements(path, 0, seen, &names)
+	err := readRequirements(path, 0, map[string]bool{}, &names)
 	return names, err
 }
 
@@ -58,7 +51,7 @@ func readRequirements(path string, depth int, seen map[string]bool, names *[]str
 		return err
 	}
 	if seen[abs] {
-		return nil // cycle: this file was already read
+		return nil // cycle
 	}
 	seen[abs] = true
 
@@ -74,7 +67,6 @@ func readRequirements(path string, depth int, seen map[string]bool, names *[]str
 	var cont strings.Builder
 	for sc.Scan() {
 		line := sc.Text()
-		// Line continuation with a trailing "\".
 		if strings.HasSuffix(line, "\\") {
 			cont.WriteString(strings.TrimSuffix(line, "\\"))
 			cont.WriteString(" ")
@@ -84,7 +76,7 @@ func readRequirements(path string, depth int, seen map[string]bool, names *[]str
 		line = cont.String()
 		cont.Reset()
 
-		// Comment: "#" at the start of a line or after whitespace.
+		// "#" starts a comment only at the start of a line or after whitespace.
 		if i := strings.Index(line, "#"); i == 0 || (i > 0 && strings.ContainsAny(line[i-1:i], " \t")) {
 			line = line[:i]
 		}
@@ -92,19 +84,16 @@ func readRequirements(path string, depth int, seen map[string]bool, names *[]str
 		if len(fields) == 0 {
 			continue
 		}
-
 		if strings.HasPrefix(fields[0], "-") {
-			if nested := ExtractRequirementFiles(fields); len(nested) > 0 {
-				for _, n := range nested {
-					if !filepath.IsAbs(n) {
-						n = filepath.Join(filepath.Dir(path), n)
-					}
-					if err := readRequirements(n, depth+1, seen, names); err != nil && firstErr == nil {
-						firstErr = err
-					}
+			for _, n := range ExtractRequirementFiles(fields) {
+				if !filepath.IsAbs(n) {
+					n = filepath.Join(filepath.Dir(path), n)
+				}
+				if err := readRequirements(n, depth+1, seen, names); err != nil && firstErr == nil {
+					firstErr = err
 				}
 			}
-			continue // other options (-e, -c, -i, --hash, ...) are not package names
+			continue
 		}
 		if name, ok := nameFromSpec(line); ok {
 			*names = append(*names, name)
@@ -116,16 +105,16 @@ func readRequirements(path string, depth int, seen map[string]bool, names *[]str
 	return firstErr
 }
 
-// nameFromSpec extracts the project name from one PEP 508 requirement,
-// e.g. `requests[socks] >= 2.0 ; python_version < "3.8" --hash=sha256:...`.
+// nameFromSpec extracts the project name from one requirement, e.g.
+// `requests[socks] >= 2.0 ; python_version < "3.8"`. Local paths, URLs,
+// direct references ("name @ url") and archive files are not index packages.
 func nameFromSpec(spec string) (string, bool) {
 	spec = strings.TrimSpace(spec)
-	if i := strings.Index(spec, ";"); i != -1 { // environment marker
+	if i := strings.Index(spec, ";"); i != -1 {
 		spec = spec[:i]
 	}
-	if strings.Contains(spec, "@") || strings.Contains(spec, "://") ||
-		strings.ContainsAny(spec, "/\\") {
-		return "", false // direct reference, URL or local path
+	if spec == "." || spec == ".." || strings.Contains(spec, "@") || strings.ContainsAny(spec, "/\\") {
+		return "", false
 	}
 	name := spec
 	for _, sep := range append([]string{" ", "\t"}, versionSeps...) {
@@ -134,8 +123,10 @@ func nameFromSpec(spec string) (string, bool) {
 		}
 	}
 	name = strings.TrimSpace(name)
-	if name == "" || strings.HasSuffix(name, ".whl") || strings.HasSuffix(name, ".tar.gz") || strings.HasSuffix(name, ".zip") {
-		return "", false
+	for _, ext := range []string{".whl", ".tar.gz", ".zip", ".txt"} {
+		if strings.HasSuffix(name, ext) {
+			return "", false
+		}
 	}
-	return name, true
+	return name, name != ""
 }

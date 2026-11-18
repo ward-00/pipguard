@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "pipguard: install-time cooldown interceptor for pip and the time-aware evaluation of install-time defenses against new malicious PyPI packages"
-version: "1.0.0"
-date-released: "2026-10-25"
+version: "1.0.1"
+date-released: "2026-11-18"
 doi: "10.5281/zenodo.23645430"
 repository-code: "https://github.com/ward-00/pipguard"
 license: MIT

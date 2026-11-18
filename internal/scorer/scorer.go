@@ -1,18 +1,7 @@
-// Package scorer implements pipguard's package risk assessment.
-//
-// Assessment has two stages:
-//
-//  1. Signal extraction (Model.Signals): each indicator I-01..I-10 is
-//     checked against the package name and its PyPI metadata.
-//  2. Weighting (Model.Score): the points of the fired indicators are summed
-//     and mapped to a risk level by two thresholds.
-//
-// Three models are provided. V1 is the initial design (designer-set weights)
-// and V2 the calibrated two-decision model of the first journal submission;
-// both are kept unchanged for comparison. V3, used by the shim, adds the
-// release-level dormancy rule I-10. Weights and thresholds were calibrated
-// on development/validation data and tested on temporally separated data;
-// see scripts/eval/ and paper/RESULTS.md.
+// Package scorer assesses package risk in two stages: Signals checks the
+// indicators I-01..I-10, and Score sums the points of the fired indicators
+// and maps the sum to a risk level. V1 (initial design) and V2 (calibrated)
+// are kept for comparison; the shim uses V3.
 package scorer
 
 import (
@@ -22,8 +11,6 @@ import (
 	"github.com/ward-00/pipguard/internal/registry"
 )
 
-// Indicator codes. I-01..I-06 come from the initial design, I-07..I-09 were
-// added in iteration 2 and I-10 in iteration 3.
 const (
 	RuleNotRegistered = "I-01" // not registered on PyPI
 	RuleNew           = "I-02" // first release less than 30 days before the check
@@ -37,7 +24,6 @@ const (
 	RuleReactivated   = "I-10" // new release of an older project after a long period without releases
 )
 
-// AllRules lists every extracted indicator, in order.
 var AllRules = []string{
 	RuleNotRegistered, RuleNew, RuleSingleRelease, RuleNoLinks, RuleSimilarName,
 	RuleShortSummary, RuleSdistOnly, RuleShortDesc, RuleNoClassifiers, RuleReactivated,
@@ -50,7 +36,6 @@ const (
 	shortDescriptionLn = 100
 )
 
-// Level is the final risk level of a package.
 type Level int
 
 const (
@@ -72,14 +57,11 @@ func (l Level) String() string {
 	}
 }
 
-// Hit records one fired indicator and the points it contributed. Used by
-// cmd/evalset for baselines and ablation.
 type Hit struct {
 	Rule   string // "I-01" .. "I-10"
 	Points int
 }
 
-// Result is the risk assessment of one package.
 type Result struct {
 	Score   int
 	Level   Level
@@ -87,8 +69,6 @@ type Result struct {
 	Hits    []Hit
 }
 
-// Signals is the output of the extraction stage: which indicators fired,
-// with a human-readable reason for each.
 type Signals struct {
 	Fired     map[string]bool
 	Reasons   map[string]string
@@ -101,21 +81,16 @@ func (s *Signals) fire(rule, reason string) {
 	s.Reasons[rule] = reason
 }
 
-// Model combines the name-similarity configuration (I-05) and the dormancy
-// period of I-10 with the indicator weights and level thresholds.
 type Model struct {
 	Name       string
-	Points     map[string]int // indicators without points do not affect the score
-	Warn       int            // minimum WARNING score
-	Danger     int            // minimum DANGER score
+	Points     map[string]int
+	Warn       int // minimum WARNING score
+	Danger     int // minimum DANGER score
 	Similarity *Similarity
-	// Dormancy enables I-10 when positive: the latest release is younger
-	// than 30 days and was uploaded at least Dormancy after the previous one.
-	Dormancy time.Duration
+	Dormancy   time.Duration // enables I-10 when positive
 }
 
-// V1 returns the initial design: designer-set weights, thresholds 20/60,
-// I-05 at Levenshtein distance 1..2 for names of at least 6 characters.
+// V1 is the initial design with designer-set weights.
 func V1(popular []string) Model {
 	return Model{
 		Name: "v1",
@@ -128,21 +103,10 @@ func V1(popular []string) Model {
 	}
 }
 
-// V2 returns the two-decision model of iteration 2.
-//
-//   - I-01 not registered: 100 points, always DANGER.
-//   - I-02 younger than 30 days: 50 points, equal to the WARNING threshold,
-//     so every new project requires confirmation (project-level cooldown).
-//   - I-03..I-09 (metadata and name similarity) only raise a new package to
-//     DANGER. Their points sum to at most 49, so metadata alone never flags
-//     an established package.
-//
-// The metadata points, the DANGER threshold (50 + tau) and the I-05
-// configuration (top 5,000 packages in assets/popular_v2.txt, Levenshtein
-// distance 1, names of at least 5 characters) were fitted on 2025 packages
-// (scripts/eval/fit_weights.py, paper/data/calibration.json). I-03 and I-06
-// carry no information (0 points). scripts/eval/run_all.sh checks that the
-// numbers here equal the calibration output.
+// V2 is the calibrated two-decision model. I-02 alone reaches the WARNING
+// threshold, so every new project requires confirmation; the metadata and
+// name points sum to less than 50, so they never flag an established
+// project and only raise a new one to DANGER.
 func V2(popular []string) Model {
 	return Model{
 		Name: "v2",
@@ -156,28 +120,16 @@ func V2(popular []string) Model {
 	}
 }
 
-// V3DormancyDays is the default dormancy period of I-10 in the shipped
-// model; 0 disables the rule. It is fixed by a decision rule applied to
-// development and validation data only (scripts/eval/analyze_v3.py,
-// paper/data/dormancy_choice.json): the rule is enabled by default only if
-// its share of affected install-client downloads does not exceed that of the
-// 30-day project-level cooldown. Users can enable it with
-// "release_dormancy_days" in the configuration file.
+// V3DormancyDays is the default I-10 dormancy period; 0 disables the rule.
+// Users can enable it with "release_dormancy_days" in the configuration.
 const V3DormancyDays = 0
 
-// V3 returns the model used by the shim: V2 plus the release-level
-// dormancy rule I-10 when dormancyDays > 0. A release younger than 30 days
-// that follows at least dormancyDays without releases, in a project older
-// than 30 days, receives 50 points and so requires confirmation like a new
-// project. This covers compromised or "pre-aged" projects, which the
-// project-level age of I-02 cannot see.
+// V3 is V2 plus I-10: a release younger than 30 days that follows at least
+// dormancyDays without releases requires confirmation like a new project,
+// which covers compromised or pre-aged projects that I-02 cannot see.
 func V3(popular []string, dormancyDays int) Model {
 	m := V2(popular)
 	m.Name = "v3"
-	m.Points = map[string]int{}
-	for k, v := range V2(popular).Points {
-		m.Points[k] = v
-	}
 	if dormancyDays > 0 {
 		m.Points[RuleReactivated] = 50
 		m.Dormancy = time.Duration(dormancyDays) * 24 * time.Hour
@@ -185,7 +137,6 @@ func V3(popular []string, dormancyDays int) Model {
 	return m
 }
 
-// LevelFor maps a score to a risk level using the model's thresholds.
 func (m Model) LevelFor(score int) Level {
 	switch {
 	case score >= m.Danger:
@@ -197,8 +148,7 @@ func (m Model) LevelFor(score int) Level {
 	}
 }
 
-// Signals extracts every indicator for package "name" (already normalized,
-// see internal/parser.Normalize) at time "now".
+// Signals checks every indicator for the normalized name "name" at "now".
 func (m Model) Signals(name string, meta registry.Metadata, now time.Time) Signals {
 	s := Signals{Fired: map[string]bool{}, Reasons: map[string]string{}}
 
@@ -208,7 +158,6 @@ func (m Model) Signals(name string, meta registry.Metadata, now time.Time) Signa
 			" edit(s) away from the popular package \""+match+"\"")
 	}
 
-	// I-01: not registered is definitive; there is no metadata to check.
 	if !meta.Exists {
 		s.fire(RuleNotRegistered, "The package is not registered on PyPI")
 		return s
@@ -244,8 +193,8 @@ func (m Model) Signals(name string, meta registry.Metadata, now time.Time) Signa
 	return s
 }
 
-// Score sums the points of the fired indicators and sets the risk level.
-// An unregistered package is always DANGER.
+// Score sums the points of the fired indicators. An unregistered package is
+// always DANGER.
 func (m Model) Score(s Signals) Result {
 	r := Result{}
 	for _, rule := range AllRules {
@@ -264,14 +213,12 @@ func (m Model) Score(s Signals) Result {
 	return r
 }
 
-// EvaluateAt assesses a package with ages (I-02, I-10) relative to "now".
-// Used by the historical evaluation: removed malicious packages are assessed
-// at a time when they were still installable.
+// EvaluateAt assesses a package as of "now" (used by the historical
+// evaluation).
 func (m Model) EvaluateAt(name string, meta registry.Metadata, now time.Time) Result {
 	return m.Score(m.Signals(name, meta, now))
 }
 
-// Evaluate assesses package "name" at the current time.
 func (m Model) Evaluate(name string, meta registry.Metadata) Result {
 	return m.EvaluateAt(name, meta, time.Now())
 }

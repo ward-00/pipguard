@@ -26,6 +26,7 @@ scripts/malicious/data/
 
 # Manuscript, reviews and working notes (not part of the software artifact)
 paper-writing/
+skripsi-writing/
 scripts/paper/
 HANDOVER.md
 remind.md

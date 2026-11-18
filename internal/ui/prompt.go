@@ -1,5 +1,4 @@
-// Package ui shows package security warnings and asks the user for
-// confirmation before the installation continues.
+// Package ui shows the security warning and asks for confirmation.
 package ui
 
 import (
@@ -13,16 +12,14 @@ import (
 	"github.com/ward-00/pipguard/internal/scorer"
 )
 
-// ExitBlocked is the exit status when pipguard cancels a command, distinct
-// from pip's own statuses (1 = error, 2 = usage) so that scripts, CI jobs
-// and AI coding agents can tell a security stop from a failed installation.
+// ExitBlocked differs from pip's own statuses (1 = error, 2 = usage), so that
+// scripts, CI jobs and AI agents can tell a security stop from a failure.
 const ExitBlocked = 3
 
-// Decision is the machine-readable record printed on stderr when no
-// terminal is available, as one JSON line prefixed with "pipguard: ".
+// Decision is the JSON record printed on stderr when no terminal is available.
 type Decision struct {
 	Tool     string   `json:"tool"`
-	Decision string   `json:"decision"` // "blocked"
+	Decision string   `json:"decision"`
 	Package  string   `json:"package"`
 	Level    string   `json:"level"`
 	Score    int      `json:"score"`
@@ -31,10 +28,8 @@ type Decision struct {
 	Exit     int      `json:"exit_status"`
 }
 
-// Confirm prints the risk summary for package "name" on stderr (so that it
-// does not mix with pip's standard output) and asks for Y/N confirmation.
-// Without an interactive terminal on stdin the installation is cancelled,
-// unless assumeYes is set by the configuration.
+// Confirm prints the warning on stderr, keeping pip's stdout clean, and asks
+// for confirmation. Without a terminal it cancels unless assumeYes is set.
 func Confirm(name string, r scorer.Result, assumeYes bool, notes []string) bool {
 	return confirm(os.Stderr, os.Stdin, isTerminal(os.Stdin), name, r, assumeYes, notes)
 }
@@ -64,8 +59,6 @@ func confirm(w io.Writer, in io.Reader, interactive bool, name string, r scorer.
 		return true
 	}
 
-	// Non-interactive context (CI, scripts, AI agents): cancel by default
-	// and leave a machine-readable record of why.
 	if !interactive {
 		fmt.Fprintln(w, "[non-interactive] Installation cancelled.")
 		d := Decision{Tool: "pipguard", Decision: "blocked", Package: name, Level: r.Level.String(),

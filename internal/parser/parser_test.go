@@ -32,6 +32,13 @@ func TestExtractPackages(t *testing.T) {
 		{[]string{"./local/path"}, []string{}},
 		{[]string{"git+https://github.com/foo/bar.git"}, []string{}},
 		{[]string{"requests", "flask"}, []string{"requests", "flask"}},
+		{[]string{"-e", "."}, []string{}},
+		{[]string{"."}, []string{}},
+		{[]string{"--no-binary", ":all:", "-d", "pkgs", "requests"}, []string{"requests"}},
+		{[]string{"--platform", "manylinux2014_x86_64", "--python-version", "3.11", "x"}, []string{"x"}},
+		{[]string{"--upgrade-strategy", "eager", "--progress-bar", "off", "--group", "dev", "x"}, []string{"x"}},
+		{[]string{"-w", "wheelhouse", "--report", "r.json", "-C", "k=v", "x"}, []string{"x"}},
+		{[]string{`x; python_version < "3.8"`}, []string{"x"}},
 	}
 	for _, c := range cases {
 		got := ExtractPackages(c.args)
@@ -82,6 +89,18 @@ func TestSubcommand(t *testing.T) {
 	for _, c := range cases {
 		if cmd, rest := Subcommand(c.args); cmd != c.cmd || rest != c.rest {
 			t.Errorf("Subcommand(%v) = %q,%d want %q,%d", c.args, cmd, rest, c.cmd, c.rest)
+		}
+	}
+}
+
+func TestSubcommandSkipsGeneralOptionValues(t *testing.T) {
+	for _, args := range [][]string{
+		{"--keyring-provider", "auto", "install", "x"},
+		{"--resume-retries", "3", "install", "x"},
+		{"--proxy", "http://p:3128", "-q", "install", "x"},
+	} {
+		if sub, i := Subcommand(args); sub != "install" || args[i] != "x" {
+			t.Errorf("Subcommand(%v) = %q, %d", args, sub, i)
 		}
 	}
 }

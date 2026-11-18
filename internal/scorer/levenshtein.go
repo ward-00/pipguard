@@ -1,7 +1,6 @@
 package scorer
 
-// levenshtein computes the edit distance between two strings with two rows
-// of memory instead of a full matrix.
+// levenshtein computes the edit distance with two rows instead of a matrix.
 func levenshtein(a, b string) int {
 	ra, rb := []rune(a), []rune(b)
 	prev := make([]int, len(rb)+1)
@@ -23,9 +22,8 @@ func levenshtein(a, b string) int {
 	return prev[len(rb)]
 }
 
-// osa computes the optimal string alignment distance (restricted
-// Damerau-Levenshtein): Levenshtein plus the swap of two adjacent characters
-// ("reqeusts" vs "requests") as a single operation.
+// osa is Levenshtein that also counts swapping two adjacent characters
+// ("reqeusts") as one edit (optimal string alignment).
 func osa(a, b string) int {
 	ra, rb := []rune(a), []rune(b)
 	pprev := make([]int, len(rb)+1)
@@ -69,20 +67,15 @@ func abs(n int) int {
 	return n
 }
 
-// Similarity configures the name-similarity indicator (I-05).
+// Similarity configures the name-similarity indicator I-05.
 type Similarity struct {
-	Popular        []string // normalized popular names
-	MinLen         int      // shorter names are not assessed
-	MaxDist        int      // maximum distance considered similar
-	Transpositions bool     // use OSA instead of Levenshtein
+	Popular        []string
+	MinLen         int // short names lie close to some popular name by chance ("mcp" vs "pip")
+	MaxDist        int
+	Transpositions bool // use osa instead of levenshtein
 	set            map[string]bool
 }
 
-// NewSimilarity prepares an I-05 configuration.
-//
-// minLen exists because short names are within a distance of two of one of
-// hundreds of popular names by chance (e.g. "mcp" vs "pip", "jedi" vs
-// "redis"); see testdata/ACCURACY_NOTES.md, finding 2.
 func NewSimilarity(popular []string, minLen, maxDist int, transpositions bool) *Similarity {
 	s := &Similarity{Popular: popular, MinLen: minLen, MaxDist: maxDist, Transpositions: transpositions,
 		set: make(map[string]bool, len(popular))}
@@ -92,12 +85,8 @@ func NewSimilarity(popular []string, minLen, maxDist int, transpositions bool) *
 	return s
 }
 
-// Match returns the closest popular name when "name" is long enough, is not
-// itself popular, and lies at distance 1..MaxDist from it.
-//
-// Names on the popular list are exempt: a popular package is not a typosquat
-// of another popular package, even if the names are similar
-// (e.g. "psycopg" vs "psycopg2").
+// Match returns the closest popular name at distance 1..MaxDist. Popular
+// names themselves are exempt ("psycopg" is not a typosquat of "psycopg2").
 func (s *Similarity) Match(name string) (string, int, bool) {
 	if len([]rune(name)) < s.MinLen || s.set[name] {
 		return "", 0, false
@@ -108,8 +97,6 @@ func (s *Similarity) Match(name string) (string, int, bool) {
 	}
 	best, bestName := -1, ""
 	for _, p := range s.Popular {
-		// A length difference above MaxDist implies a distance above
-		// MaxDist; skip without computing it.
 		if abs(len(name)-len(p)) > s.MaxDist {
 			continue
 		}

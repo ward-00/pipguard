@@ -1,9 +1,5 @@
-// Package popular parses a list of popular package names (e.g.
-// assets/popular.txt) into normalized names for the name-similarity check
-// (typosquatting) in internal/scorer.
-//
-// It is separate from main.go so that other tools (cmd/evalset) can reuse it
-// without go:embed, which cannot cross package directories.
+// Package popular parses the list of popular package names used by the
+// name-similarity indicator I-05.
 package popular
 
 import (
@@ -13,8 +9,7 @@ import (
 	"github.com/ward-00/pipguard/internal/parser"
 )
 
-// Parse reads a popular-list file: one name per line; empty lines and lines
-// starting with "#" are ignored. Every name is normalized per PEP 503.
+// Parse reads one name per line, skipping empty lines and "#" comments.
 func Parse(raw string) []string {
 	var list []string
 	sc := bufio.NewScanner(strings.NewReader(raw))

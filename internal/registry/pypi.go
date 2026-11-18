@@ -19,15 +19,11 @@ type Metadata struct {
 	HasRepository bool      `json:"has_repository"`
 	Summary       string    `json:"summary"`
 
-	// Attributes of the latest release ("info" and "urls" in the PyPI JSON
-	// API), used by indicators I-07..I-09.
 	DescriptionLen  int  `json:"description_len"`
 	ClassifierCount int  `json:"classifier_count"`
-	SdistOnly       bool `json:"sdist_only"` // sdist only, no wheel: the build script runs at install time
+	SdistOnly       bool `json:"sdist_only"` // latest release has no wheel
 
-	// Release times (first file of each version, ordered by upload time),
-	// used by the release-level dormancy rule I-10. PreviousRelease is zero
-	// when the project has a single release.
+	// PreviousRelease is zero when the project has a single release.
 	LatestRelease   time.Time `json:"latest_release,omitempty"`
 	PreviousRelease time.Time `json:"previous_release,omitempty"`
 }
@@ -48,32 +44,25 @@ type pypiResponse struct {
 	} `json:"urls"`
 }
 
-// runtimeTimeout is used by the shim at installation time. It is short so
-// that fail-open is fast; packages with very large metadata can exceed it.
+// runtimeTimeout is short so that fail-open is fast.
 const runtimeTimeout = 3 * time.Second
 
 var client = &http.Client{Timeout: runtimeTimeout}
 
-// FetchWithTimeout is Fetch with a custom timeout. The evaluation tool
-// (cmd/evalset) uses it so that large packages are not recorded as spurious
-// network failures.
+// FetchWithTimeout is Fetch with a custom timeout (used by cmd/evalset).
 func FetchWithTimeout(name string, timeout time.Duration) (Metadata, error) {
 	return fetch(name, &http.Client{Timeout: timeout})
 }
 
-// repoURLKeys are the project_urls keys taken to denote a source repository.
 var repoURLKeys = []string{"Source", "Repository", "Source Code", "Homepage", "Code", "GitHub"}
 
 // Fetch retrieves the metadata of package "name" from the PyPI JSON API.
-//
-// (Metadata{Exists:false}, nil) is the definitive signal that the package is
-// not registered (404). An error means a network or parsing failure, and the
-// caller MUST apply the fail-open policy.
+// Only a 404 means "not registered" (Exists false); any other failure is an
+// error, for which the caller must fail open.
 func Fetch(name string) (Metadata, error) {
 	return fetch(name, client)
 }
 
-// baseURL adalah akar PyPI JSON API; diganti oleh unit test (httptest).
 var baseURL = "https://pypi.org"
 
 func fetch(name string, c *http.Client) (Metadata, error) {
@@ -110,8 +99,7 @@ func fetch(name string, c *http.Client) (Metadata, error) {
 		DescriptionLen:  len(r.Info.Description),
 		ClassifierCount: len(r.Info.Classifiers),
 	}
-	// "urls" lists the files of the latest release. Sdist-only when there are
-	// files and none of them is a built distribution (wheel/egg).
+	// "urls" lists the files of the latest release.
 	m.SdistOnly = len(r.URLs) > 0
 	for _, u := range r.URLs {
 		if u.PackageType != "sdist" {
@@ -126,9 +114,6 @@ func fetch(name string, c *http.Client) (Metadata, error) {
 		}
 	}
 
-	// The earliest release gives the project age. Without any parseable
-	// release time the package is treated as new ("now"), which is the
-	// conservative choice.
 	var times []time.Time
 	for _, files := range r.Releases {
 		var first time.Time
@@ -149,9 +134,9 @@ func fetch(name string, c *http.Client) (Metadata, error) {
 	return m, nil
 }
 
-// releaseTimes returns the first, latest and previous release times from
-// the per-version upload times (in any order). With no times at all, the
-// first and latest release are "now".
+// releaseTimes returns the first, latest and previous of the per-version
+// upload times. Without any release time the project counts as new ("now"),
+// the conservative choice.
 func releaseTimes(times []time.Time, now time.Time) (first, latest, previous time.Time) {
 	if len(times) == 0 {
 		return now, now, time.Time{}

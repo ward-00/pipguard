@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Installs pipguard as a `pip`/`pip3` shim plus shell functions.
-# See build_guide.md §5 for the two-layer architecture.
+# Installs pipguard as a pip/pip3 shim (layer 2) plus shell functions (layer 1).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,19 +17,14 @@ install -m 0755 "$REPO_DIR/build/pipguard" "$BIN_DIR/pipguard"
 ln -sf "$BIN_DIR/pipguard" "$BIN_DIR/pip"
 ln -sf "$BIN_DIR/pipguard" "$BIN_DIR/pip3"
 
-# Pick the rc file of the user's login shell.
 case "$(basename "${SHELL:-bash}")" in
   zsh)  RC="$HOME/.zshrc"  ;;
   bash) RC="$HOME/.bashrc" ;;
   *)    echo "pipguard: unsupported shell ($SHELL)" >&2; exit 1 ;;
 esac
 
-# A marked block, so that uninstall.sh can remove it completely.
-# It defines pip(), pip3(), python() and python3(); the last two handle
-# `python[3] -m pip install ...`, which the binary shim cannot see.
-#
-# The functions call the pip/pip3 symlinks (not the pipguard binary) so that
-# the shim knows which real pip to look up on PATH.
+# python() and python3() catch `python -m pip`, which the shim cannot see. The
+# functions call the pip/pip3 links so that the shim knows which pip to find.
 BLOCK=$(cat <<'EOF'
 # >>> BEGIN pipguard >>>
 export PATH="$HOME/.local/bin:$PATH"
@@ -56,7 +50,6 @@ python3() {
 EOF
 )
 
-# Replace the block of a previous version so that fixes take effect.
 if grep -q "BEGIN pipguard" "$RC" 2>/dev/null; then
   sed -i.bak '/# >>> BEGIN pipguard >>>/,/# <<< END pipguard <<</d' "$RC"
   rm -f "$RC.bak"
